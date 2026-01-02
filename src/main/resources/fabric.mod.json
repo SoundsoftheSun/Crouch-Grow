@@ -2,20 +2,18 @@
   "schemaVersion": 1,
   "id": "crouch-grow",
   "version": "${version}",
-  "name": "crouch-grow",
-  "description": "",
-  "authors": [],
-  "contact": {},
+  "name": "Crouch Grow",
+  "description": "Crouch to grow your crops faster. Configure with /crouch_grow",
+  "authors": [
+    "SoundsoftheSun"
+  ],
+  "contact": {
+    "homepage": "https://github.com/SoundsoftheSun/Crouch-Grow"
+  },
   "license": "MIT",
-  "icon": "assets/crouch-grow/icon.png",
+  "icon": "assets/icon.png",
   "environment": "*",
   "entrypoints": {
-    "fabric-datagen": [
-      "net.soundsofthesun.crouchGrow.client.CrouchGrowDataGenerator"
-    ],
-    "client": [
-      "net.soundsofthesun.crouchGrow.client.CrouchGrowClient"
-    ],
     "main": [
       "net.soundsofthesun.crouchGrow.CrouchGrow"
     ]

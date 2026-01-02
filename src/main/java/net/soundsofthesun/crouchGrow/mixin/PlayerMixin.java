@@ -18,6 +18,9 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.soundsofthesun.crouchGrow.attachments.GrowChance;
+import net.soundsofthesun.crouchGrow.attachments.GrowRadius;
+import net.soundsofthesun.crouchGrow.attachments.SAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,9 +40,15 @@ public class PlayerMixin {
         if (!(player.level() instanceof ServerLevel serverLevel)) return;
         Pose newPose = player.getPose();
         if (oldPose == Pose.STANDING && newPose == Pose.CROUCHING) {
-            for (BlockPos blockpos : BlockPos.betweenClosed(player.getBoundingBox().inflate(1, 1, 1))) {
+
+            double radius = serverLevel.getAttachedOrElse(SAttachments.RADIUS, GrowRadius.DEFAULT).n();
+
+            for (BlockPos blockpos : BlockPos.betweenClosed(player.getBoundingBox().inflate(radius, radius, radius))) {
                 if (serverLevel.getBlockState(blockpos).getBlock() instanceof BonemealableBlock bonemealableBlock) {
-                    if (serverLevel.getRandom().nextInt(8) == 0) {
+
+                    int chance = serverLevel.getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n();
+
+                    if (serverLevel.getRandom().nextInt(chance) == 0) {
                         BlockState bs = serverLevel.getBlockState(blockpos);
                         if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockpos, bs)) {
                             bonemealableBlock.performBonemeal(serverLevel, serverLevel.random, blockpos, bs);
@@ -51,5 +60,4 @@ public class PlayerMixin {
             }
         }
     }
-
 }
