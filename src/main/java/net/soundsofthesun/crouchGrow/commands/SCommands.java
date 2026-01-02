@@ -44,19 +44,19 @@ public class SCommands {
     }
 
     private static int doGrow(CommandContext<CommandSourceStack> context) {
-        context.getSource().getLevel().setAttached(SAttachments.DO_GROW, new DoGrow(context.getArgument("boolean", Boolean.class)));
+        context.getSource().getServer().getAllLevels().forEach(level -> level.setAttached(SAttachments.DO_GROW, new DoGrow(context.getArgument("boolean", Boolean.class))));
         context.getSource().sendSuccess(() -> Component.literal(CrouchGrow.MOD_ID+": "+ (context.getSource().getLevel().getAttachedOrElse(SAttachments.DO_GROW, DoGrow.DEFAULT).b() ? "enabled" : "disabled")), false);
         return 1;
     }
 
     private static int setChance(CommandContext<CommandSourceStack> context) {
-        context.getSource().getLevel().setAttached(SAttachments.CHANCE, new GrowChance(context.getArgument("chance", Integer.class)));
+        context.getSource().getServer().getAllLevels().forEach(level -> level.setAttached(SAttachments.CHANCE, new GrowChance(context.getArgument("chance", Integer.class))));
         context.getSource().sendSuccess(() -> Component.literal("Set Grow Chance to "+context.getSource().getLevel().getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n()), false);
         return 1;
     }
 
     private static int setRadius(CommandContext<CommandSourceStack> context) {
-        context.getSource().getLevel().setAttached(SAttachments.RADIUS, new GrowRadius(context.getArgument("radius", Double.class)));
+        context.getSource().getServer().getAllLevels().forEach(level -> level.setAttached(SAttachments.RADIUS, new GrowRadius(context.getArgument("radius", Double.class))));
         context.getSource().sendSuccess(() -> Component.literal("Set Grow Radius to "+context.getSource().getLevel().getAttachedOrElse(SAttachments.RADIUS, GrowRadius.DEFAULT).n()), false);
         return 1;
     }
