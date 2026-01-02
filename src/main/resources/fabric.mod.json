@@ -3,7 +3,7 @@
   "id": "crouch-grow",
   "version": "${version}",
   "name": "Crouch Grow",
-  "description": "Crouch to grow your crops faster. Configure with /crouch_grow",
+  "description": "Crouch to grow your crops faster. Configure with /crouch_grow.",
   "authors": [
     "SoundsoftheSun"
   ],
