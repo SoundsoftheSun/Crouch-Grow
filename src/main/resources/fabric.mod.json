@@ -10,7 +10,7 @@
   "contact": {
     "homepage": "https://github.com/SoundsoftheSun/Crouch-Grow"
   },
-  "license": "MIT",
+  "license": "GNU GPLv3",
   "icon": "assets/icon.png",
   "environment": "*",
   "entrypoints": {
