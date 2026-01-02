@@ -40,7 +40,7 @@ public class PlayerMixin {
         Pose oldPose = player.getPose();
         original.call(player, pose);
         if (!(player.level() instanceof ServerLevel serverLevel)) return;
-        if (!(serverLevel.getAttachedOrElse(SAttachments.DO_GROW, new DoGrow(false)).b())) return;
+        if (!(serverLevel.getAttachedOrElse(SAttachments.DO_GROW, DoGrow.DEFAULT).b())) return;
         Pose newPose = player.getPose();
         if (oldPose == Pose.STANDING && newPose == Pose.CROUCHING) {
 
