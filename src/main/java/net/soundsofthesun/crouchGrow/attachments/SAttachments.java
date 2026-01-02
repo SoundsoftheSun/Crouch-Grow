@@ -23,4 +23,11 @@ public class SAttachments {
                     .persistent(GrowRadius.CODEC)
     );
 
+    public static final AttachmentType<DoGrow> DO_GROW = AttachmentRegistry.create(
+            Identifier.fromNamespaceAndPath(CrouchGrow.MOD_ID, "do_grow"),
+            builder->builder
+                    .initializer(()->DoGrow.DEFAULT)
+                    .persistent(DoGrow.CODEC)
+    );
+
 }

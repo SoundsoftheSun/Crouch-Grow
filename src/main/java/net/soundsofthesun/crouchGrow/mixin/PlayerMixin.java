@@ -16,8 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.soundsofthesun.crouchGrow.attachments.DoGrow;
 import net.soundsofthesun.crouchGrow.attachments.GrowChance;
 import net.soundsofthesun.crouchGrow.attachments.GrowRadius;
 import net.soundsofthesun.crouchGrow.attachments.SAttachments;
@@ -38,13 +40,15 @@ public class PlayerMixin {
         Pose oldPose = player.getPose();
         original.call(player, pose);
         if (!(player.level() instanceof ServerLevel serverLevel)) return;
+        if (!(serverLevel.getAttachedOrElse(SAttachments.DO_GROW, DoGrow.DEFAULT).b())) return;
         Pose newPose = player.getPose();
         if (oldPose == Pose.STANDING && newPose == Pose.CROUCHING) {
 
             double radius = serverLevel.getAttachedOrElse(SAttachments.RADIUS, GrowRadius.DEFAULT).n();
 
             for (BlockPos blockpos : BlockPos.betweenClosed(player.getBoundingBox().inflate(radius, radius, radius))) {
-                if (serverLevel.getBlockState(blockpos).getBlock() instanceof BonemealableBlock bonemealableBlock) {
+                Block block = serverLevel.getBlockState(blockpos).getBlock();
+                if (block instanceof BonemealableBlock bonemealableBlock && block instanceof VegetationBlock) {
 
                     int chance = serverLevel.getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n();
 
