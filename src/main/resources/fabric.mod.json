@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "crouch-grow",
+  "version": "${version}",
+  "name": "crouch-grow",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/crouch-grow/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "net.soundsofthesun.crouchGrow.client.CrouchGrowDataGenerator"
+    ],
+    "client": [
+      "net.soundsofthesun.crouchGrow.client.CrouchGrowClient"
+    ],
+    "main": [
+      "net.soundsofthesun.crouchGrow.CrouchGrow"
+    ]
+  },
+  "mixins": [
+    "crouch-grow.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

@@ -1,0 +1,55 @@
+package net.soundsofthesun.crouchGrow.mixin;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
+import java.util.jar.JarEntry;
+
+@Mixin(Player.class)
+public class PlayerMixin {
+
+    @WrapOperation(method = "updatePlayerPose", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setPose(Lnet/minecraft/world/entity/Pose;)V"))
+    void fs$updatePlayerPose(Player player, Pose pose, Operation<Void> original) {
+        Pose oldPose = player.getPose();
+        original.call(player, pose);
+        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+        Pose newPose = player.getPose();
+        if (oldPose == Pose.STANDING && newPose == Pose.CROUCHING) {
+            for (BlockPos blockpos : BlockPos.betweenClosed(player.getBoundingBox().inflate(1, 1, 1))) {
+                if (serverLevel.getBlockState(blockpos).getBlock() instanceof BonemealableBlock bonemealableBlock) {
+                    if (serverLevel.getRandom().nextInt(8) == 0) {
+                        BlockState bs = serverLevel.getBlockState(blockpos);
+                        if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockpos, bs)) {
+                            bonemealableBlock.performBonemeal(serverLevel, serverLevel.random, blockpos, bs);
+                            break;
+                        }
+                    }
+                    serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, blockpos.getX()+0.5, blockpos.getY()+0.25, blockpos.getZ()+0.5, 3, 0.25, 0.25, 0.25, 1);
+                }
+            }
+        }
+    }
+
+}
