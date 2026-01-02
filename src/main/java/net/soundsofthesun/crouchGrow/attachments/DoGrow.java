@@ -13,7 +13,7 @@ public record DoGrow(Boolean b) {
 
     public static StreamCodec<ByteBuf, DoGrow> PACKET_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
-    public static DoGrow DEFAULT = new DoGrow(false);
+    public static DoGrow DEFAULT = new DoGrow(true);
 
     public DoGrow clear() {
         return DEFAULT;
