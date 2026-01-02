@@ -13,10 +13,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.VegetationBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.soundsofthesun.crouchGrow.attachments.DoGrow;
@@ -43,23 +40,27 @@ public class PlayerMixin {
         if (!(serverLevel.getAttachedOrElse(SAttachments.DO_GROW, DoGrow.DEFAULT).b())) return;
         Pose newPose = player.getPose();
         if (oldPose == Pose.STANDING && newPose == Pose.CROUCHING) {
-
             double radius = serverLevel.getAttachedOrElse(SAttachments.RADIUS, GrowRadius.DEFAULT).n();
-
             for (BlockPos blockpos : BlockPos.betweenClosed(player.getBoundingBox().inflate(radius, radius, radius))) {
-                Block block = serverLevel.getBlockState(blockpos).getBlock();
+                BlockState bs = serverLevel.getBlockState(blockpos);
+                Block block = bs.getBlock();
                 if (block instanceof BonemealableBlock bonemealableBlock && block instanceof VegetationBlock) {
-
                     int chance = serverLevel.getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n();
-
                     if (serverLevel.getRandom().nextInt(chance) == 0) {
-                        BlockState bs = serverLevel.getBlockState(blockpos);
                         if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockpos, bs)) {
                             bonemealableBlock.performBonemeal(serverLevel, serverLevel.random, blockpos, bs);
                             break;
                         }
                     }
                     serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, blockpos.getX()+0.5, blockpos.getY()+0.25, blockpos.getZ()+0.5, 3, 0.25, 0.25, 0.25, 1);
+                } else if (block instanceof NetherWartBlock) {
+                    int age = bs.getValue(NetherWartBlock.AGE);
+                    int chance = serverLevel.getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n();
+                    if (serverLevel.getRandom().nextInt(chance) == 0 && age < NetherWartBlock.MAX_AGE) {
+                        serverLevel.setBlockAndUpdate(blockpos, bs.setValue(NetherWartBlock.AGE, ++age));
+                        break;
+                    }
+                    serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, blockpos.getX()+0.5, blockpos.getY()+0.25, blockpos.getZ()+0.5, 2, 0.25, 0.25, 0.25, 0);
                 }
             }
         }
