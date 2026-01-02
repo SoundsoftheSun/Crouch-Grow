@@ -1,5 +1,6 @@
 package net.soundsofthesun.crouchGrow.commands;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -23,12 +24,9 @@ public class SCommands {
             dispatcher.register(Commands.literal(CrouchGrow.MOD_ID)
                     .requires(source -> source.permissions().hasPermission(COMMANDS_ADMIN))
                     .executes(SCommands::help)
-                    .then(Commands.literal("config")
-                            .executes(SCommands::help))
-                    .then(Commands.literal("enable")
-                            .executes(SCommands::enable))
-                    .then(Commands.literal("disable")
-                            .executes(SCommands::disable))
+                    .then(Commands.literal("doGrow")
+                            .then(Commands.argument("boolean", BoolArgumentType.bool())
+                                    .executes(SCommands::doGrow)))
                     .then(Commands.literal("set_chance")
                             .then(Commands.argument("chance", IntegerArgumentType.integer(1))
                                     .executes(SCommands::setChance)))
@@ -41,19 +39,13 @@ public class SCommands {
 
 
     private static int help(CommandContext<CommandSourceStack> context) {
-        context.getSource().sendSuccess(() -> Component.literal(CrouchGrow.MOD_ID+": player radius: "+ context.getSource().getLevel().getAttachedOrElse(SAttachments.RADIUS, GrowRadius.DEFAULT).n()+ ", grow chance: "+context.getSource().getLevel().getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n()), false);
+        context.getSource().sendSuccess(() -> Component.literal(CrouchGrow.MOD_ID+": "+(context.getSource().getLevel().getAttachedOrElse(SAttachments.DO_GROW, DoGrow.DEFAULT).b() ? "enabled" : "disabled")+". Player radius: "+ context.getSource().getLevel().getAttachedOrElse(SAttachments.RADIUS, GrowRadius.DEFAULT).n()+ ". Grow chance: "+context.getSource().getLevel().getAttachedOrElse(SAttachments.CHANCE, GrowChance.DEFAULT).n()), false);
         return 1;
     }
 
-    private static int enable(CommandContext<CommandSourceStack> context) {
-        context.getSource().getLevel().setAttached(SAttachments.DO_GROW, new DoGrow(true));
-        context.getSource().sendSuccess(() -> Component.literal(CrouchGrow.MOD_ID+": enabled"), false);
-        return 1;
-    }
-
-    private static int disable(CommandContext<CommandSourceStack> context) {
-        context.getSource().getLevel().setAttached(SAttachments.DO_GROW, new DoGrow(false));
-        context.getSource().sendSuccess(() -> Component.literal(CrouchGrow.MOD_ID+": disabled"), false);
+    private static int doGrow(CommandContext<CommandSourceStack> context) {
+        context.getSource().getLevel().setAttached(SAttachments.DO_GROW, new DoGrow(context.getArgument("boolean", Boolean.class)));
+        context.getSource().sendSuccess(() -> Component.literal(CrouchGrow.MOD_ID+": "+ (context.getSource().getLevel().getAttachedOrElse(SAttachments.DO_GROW, DoGrow.DEFAULT).b() ? "enabled" : "disabled")), false);
         return 1;
     }
 
