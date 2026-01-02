@@ -60,7 +60,7 @@ public class PlayerMixin {
                         serverLevel.setBlockAndUpdate(blockpos, bs.setValue(NetherWartBlock.AGE, ++age));
                         break;
                     }
-                    serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, blockpos.getX()+0.5, blockpos.getY()+0.25, blockpos.getZ()+0.5, 2, 0.25, 0.25, 0.25, 0);
+                    serverLevel.sendParticles(ParticleTypes.WAX_ON, blockpos.getX()+0.5, blockpos.getY()+0.25, blockpos.getZ()+0.5, 3, 0.25, 0.25, 0.25, 1);
                 }
             }
         }
